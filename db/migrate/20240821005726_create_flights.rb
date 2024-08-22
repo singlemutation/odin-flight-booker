@@ -1,8 +1,8 @@
 class CreateFlights < ActiveRecord::Migration[7.1]
   def change
     create_table :flights do |t|
-      t.integer :departure_airport_id
-      t.integer :arrival_airport_id
+      t.references :departure_airport, foreign_key: { to_table: 'airports' }
+      t.references :arrival_airport, foreign_key: { to_table: 'airports' }
       t.datetime :start
       t.float :flight_duration
 
