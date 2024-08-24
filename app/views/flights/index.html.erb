@@ -1,22 +1,35 @@
-<h1>Flights#index</h1>
-<p>Find me in app/views/flights/index.html.erb</p>
+<h1>Let's Find Some Flights!</h1>
 
-<ul>
+
+<div>
+  <%= form_with url: "/flights", method: :get do |form| %>
+    <%= form.label(:departure_airport, 'From:') %>
+    <%= form.select :departure_airport_id, Airport.order(:airport_code).map { |airport| [airport.airport_code, airport.id] } %>
+    <%= form.label(:arrival_airport, 'To:') %>
+    <%= form.select :arrival_airport_id, Airport.order(:airport_code).map { |airport| [airport.airport_code, airport.id] } %>
+    <%= form.label(:start, "Date:") %>
+    <%= form.select "start", options_from_collection_for_select(Flight.get_flight_dates, 'start', :flight_date_formatted) %>
+    <%= form.label(:passenger_num, "Passengers:") %>
+    <%= form.select :passenger_num, options_for_select([[1, 1], [2, 2], [3, 3], [4, 4]]) %>
+    <%= form.submit 'Search' %>
+  <% end %>
+</div>
+<%
+=begin%>
+ <div>
+  <ul>
   <% @flights.each do |flight| %>
     <li>
       <%= flight.departure_airport.airport_code %> to <%= flight.arrival_airport.airport_code %> on <%= flight.start %>
     </li>
     <% end %>
-</ul>
+  </ul>
+</div> 
+<%
+=end%>
 
-<%= form_with url: "/flights", method: :get do |form| %>
-  <%= form.label(:departure_airport, 'From:') %>
-  <%= form.select :departure_airport_id, Airport.order(:airport_code).map { |airport| [airport.airport_code, airport.id] } %>
-  <%= form.label(:arrival_airport, 'To:') %>
-  <%= form.select :arrival_airport_id, Airport.order(:airport_code).map { |airport| [airport.airport_code, airport.id] } %>
-  <%= form.label(:start, "Date:") %>
-  <%= form.select "start", options_from_collection_for_select(Flight.get_flight_dates, 'start', :flight_date_formatted) %>
-  <%= form.label(:passenger_num, "Passengers:") %>
-  <%= form.select :passenger_num, options_for_select([[1, 1], [2, 2], [3, 3], [4, 4]]) %>
-  <%= form.submit 'Search' %>
+<%= form_with url: new_booking_url, method: :get do |f| %>
+  <%= f.hidden_field :passenger_num, value: @passenger_num %>
+  <%= f.collection_radio_buttons :flight_id, @flights, :id, :flight_display, include_hidden: false %>
+  <%= f.submit 'Choose Flight' %>
 <% end %>
